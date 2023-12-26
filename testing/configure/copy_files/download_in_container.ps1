@@ -44,7 +44,7 @@ param(
     [string]$FileDownloadUrl,
 
     [Parameter(Mandatory=$true)]
-    [string]$DestinationFilePath,  # This will be stripped to only the filename
+    [string]$DestinationFilePath  # This will be stripped to only the filename
 )
 
 # Extract just the filename from the destination file path
