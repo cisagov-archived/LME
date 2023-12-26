@@ -53,7 +53,6 @@ param(
     [Parameter(Mandatory=$true)]
     [string]$VMUsername  # Username on the VM
 )
-Write-Host $FileDownloadUrl
 
 # Extract just the filename from the destination file path
 $DestinationFileName = Split-Path -Leaf $DestinationFilePath
