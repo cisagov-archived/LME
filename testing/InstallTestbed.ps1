@@ -4,7 +4,7 @@ param (
 )
 
 $VMUsername = "admin.ackbar"
-$ResourceGroupName = "LME-cbaxley-t2"
+#$ResourceGroupName = "LME-cbaxley-t2"
 $VMName = "DC1"
 $LinuxVMName = "LS1"
 
