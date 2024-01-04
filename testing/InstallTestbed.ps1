@@ -10,7 +10,7 @@ $LinuxVMName = "LS1"
 
 $Password = Get-Content "password.txt"
 
-$libraryPath = Join-Path -Path $PSScriptRoot -ChildPath "azure_scripts\lib\utilitiy_functions.ps1"
+$libraryPath = Join-Path -Path $PSScriptRoot -ChildPath "configure\azure_scripts\lib\utilitiy_functions.ps1"
 
 # Check if the library file exists
 if (Test-Path -Path $libraryPath) {
