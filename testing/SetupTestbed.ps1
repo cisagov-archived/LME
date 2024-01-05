@@ -373,10 +373,12 @@ az vm run-command create `
     --run-as-password $VMPassword `
     --run-command-name "addDNSRecord" `
     --vm-name DC1 `
-    --script "Start-Process -FilePath 'powershell.exe' -ArgumentList '-Command `"Add-DnsServerResourceRecordA -Name ''LS1'' -ZoneName $DomainName -AllowUpdateAny -IPv4Address $LsIP -TimeToLive 01:00:00`" ' -NoNewWindow -WindowStyle Hidden"
+    --script "$action = New-ScheduledTaskAction -Execute 'PowerShell.exe' -Argument '-NoProfile -WindowStyle Hidden -Command `"Add-DnsServerResourceRecordA -Name ''LS1'' -ZoneName $DomainName -AllowUpdateAny -IPv4Address $LsIP -TimeToLive 01:00:00`"'; $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(1); Register-ScheduledTask -TaskName 'AddDNSRecord' -Action $action -Trigger $trigger"
+
 
 # --script "Add-DnsServerResourceRecordA -Name `"LS1`" -ZoneName $DomainName -AllowUpdateAny -IPv4Address $LsIP -TimeToLive 01:00:00"
 
+#--script "Start-Process -FilePath 'powershell.exe' -ArgumentList '-Command `"Add-DnsServerResourceRecordA -Name ''LS1'' -ZoneName $DomainName -AllowUpdateAny -IPv4Address $LsIP -TimeToLive 01:00:00`" ' -NoNewWindow -WindowStyle Hidden"
 #$scriptBlock = {
 #    param($ResourceGroup, $Location, $DomainName, $VMAdmin, $VMPassword, $LsIP)
 #
