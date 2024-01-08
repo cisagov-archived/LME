@@ -309,7 +309,10 @@ az vm run-command invoke `
     --scripts "`$Password = ConvertTo-SecureString `"$VMPassword`" -AsPlainText -Force; `
 Install-ADDSForest -DomainName $DomainName -Force -SafeModeAdministratorPassword `$Password"
 
-
+Write-Output "`nRestarting DC1..."
+az vm restart `
+    --resource-group $ResourceGroup `
+    --name DC1 `
 
 for ($i = 1; $i -le $NumClients; $i++) {
     Write-Output "`nAdding DC IP address to C$i host file..."
@@ -372,22 +375,45 @@ Write-Output "The time is $(Get-Date)."
 #    --vm-name DC1 `
 #     --script "Add-DnsServerResourceRecordA -Name `"LS1`" -ZoneName $DomainName -AllowUpdateAny -IPv4Address $LsIP -TimeToLive 01:00:00"
 
+
+# Define the PowerShell script with the DomainName variable interpolated
+$scriptContent = @"
+`$scriptBlock = {
+    Add-DnsServerResourceRecordA -Name LS1 -ZoneName $DomainName -AllowUpdateAny -IPv4Address $LsIP -TimeToLive 01:00:00
+}
+`$job = Start-Job -ScriptBlock `$scriptBlock
+`$timeout = 30
+if (Wait-Job -Job `$job -Timeout `$timeout) {
+    Receive-Job -Job `$job
+    Write-Host 'The script completed within the timeout period.'
+} else {
+    Stop-Job -Job `$job
+    Remove-Job -Job `$job
+    Write-Host 'The script timed out after `$timeout seconds.'
+}
+"@
+
+# Convert the script to a Base64-encoded string
+$bytes = [System.Text.Encoding]::Unicode.GetBytes($scriptContent)
+$encodedScript = [Convert]::ToBase64String($bytes)
+
+# Run the encoded script on the Azure VM
 az vm run-command invoke `
     --command-id RunPowerShellScript `
     --name DC1 `
     --resource-group $ResourceGroup `
-    --scripts "Set-Content -Path 'C:\AddDNSRecord.ps1' -Value ('Add-DnsServerResourceRecordA -Name \"LS1\" -ZoneName $DomainName -AllowUpdateAny -IPv4Address $LsIP -TimeToLive 01:00:00')"
+    --scripts "Set-Content -Path 'C:\AddDnsRecord.ps1' -Value ([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('$encodedScript')))"
 
 az vm run-command invoke `
     --command-id RunPowerShellScript `
     --name DC1 `
-    --resource-group  $ResourceGroup `
-    --scripts "$action = New-ScheduledTaskAction -Execute 'PowerShell.exe' -Argument '-File C:\AddDNSRecord.ps1'; $trigger = New-ScheduledTaskTrigger -AtStartup; Register-ScheduledTask -TaskName 'RunMyScriptAtStartup' -Action $action -Trigger $trigger"
+    --resource-group $ResourceGroup `
+    --scripts "C:\AddDnsRecord.ps1"
 
 Write-Output "`nRestarting DC1..."
 az vm restart `
     --resource-group $ResourceGroup `
-    --name DC1 `
+    --name DC1
 
 Write-Host "Checking if ls1 resolves..."
 az vm run-command invoke `
