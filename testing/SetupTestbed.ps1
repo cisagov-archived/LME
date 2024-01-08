@@ -366,51 +366,26 @@ it is likely that the DNS entry was still successfully added. To
 verify, log on to DC1 and run 'Resolve-DnsName ls1' in PowerShell.
 If it returns NXDOMAIN, you'll need to add it manually."
 Write-Output "The time is $(Get-Date)."
-az vm run-command create `
-    --resource-group $ResourceGroup `
-    --location $Location `
-    --run-as-user $DomainName\$VMAdmin `
-    --run-as-password $VMPassword `
-    --run-command-name "addDNSRecord" `
-    --vm-name DC1 `
-    --script "$action = New-ScheduledTaskAction -Execute 'PowerShell.exe' -Argument '-NoProfile -WindowStyle Hidden -Command `"Add-DnsServerResourceRecordA -Name ''LS1'' -ZoneName $DomainName -AllowUpdateAny -IPv4Address $LsIP -TimeToLive 01:00:00`"'; $trigger = New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(1); Register-ScheduledTask -TaskName 'AddDNSRecord' -Action $action -Trigger $trigger"
+#az vm run-command create `
+#    --resource-group $ResourceGroup `
+#    --location $Location `
+#    --run-as-user $DomainName\$VMAdmin `
+#    --run-as-password $VMPassword `
+#    --run-command-name "addDNSRecord" `
+#    --vm-name DC1 `
+#     --script "Add-DnsServerResourceRecordA -Name `"LS1`" -ZoneName $DomainName -AllowUpdateAny -IPv4Address $LsIP -TimeToLive 01:00:00"
 
+#az vm run-command invoke `
+#    --command-id RunPowerShellScript `
+#    --name DC1 `
+#    --resource-group $ResourceGroup `
+#    --scripts "Set-Content -Path 'C:\AddDNSRecord.ps1' -Value ('Add-DnsServerResourceRecordA -Name \"LS1\" -ZoneName $DomainName -AllowUpdateAny -IPv4Address $LsIP -TimeToLive 01:00:00')"
 
-# --script "Add-DnsServerResourceRecordA -Name `"LS1`" -ZoneName $DomainName -AllowUpdateAny -IPv4Address $LsIP -TimeToLive 01:00:00"
-
-#--script "Start-Process -FilePath 'powershell.exe' -ArgumentList '-Command `"Add-DnsServerResourceRecordA -Name ''LS1'' -ZoneName $DomainName -AllowUpdateAny -IPv4Address $LsIP -TimeToLive 01:00:00`" ' -NoNewWindow -WindowStyle Hidden"
-#$scriptBlock = {
-#    param($ResourceGroup, $Location, $DomainName, $VMAdmin, $VMPassword, $LsIP)
-#
-#    az vm run-command create `
-#        --resource-group $ResourceGroup `
-#        --location $Location `
-#        --run-as-user "$DomainName\$VMAdmin" `
-#        --run-as-password $VMPassword `
-#        --run-command-name "addDNSRecord" `
-#        --vm-name "DC1" `
-#        --script "Add-DnsServerResourceRecordA -Name 'LS1' -ZoneName $DomainName -AllowUpdateAny -IPv4Address $LsIP -TimeToLive 01:00:00"
-#}
-#
-## Start the Azure command as a background job
-#$job = Start-Job -ScriptBlock $scriptBlock -ArgumentList $ResourceGroup, $Location, $DomainName, $VMAdmin, $VMPassword, $LsIP
-#
-## Wait for the job to complete or timeout after 60 seconds
-#$timeoutSeconds = 60
-#$job | Wait-Job -Timeout $timeoutSeconds
-#
-## Check if the job is still running and stop it if it is
-#if ($job.State -eq "Running") {
-#    $job | Stop-Job
-#    Write-Host "The operation timed out."
-#} else {
-#    # Retrieve the job results
-#    $result = Receive-Job -Job $job
-#    Write-Host $result
-#}
-#
-## Clean up the job
-#Remove-Job -Job $job
+az vm run-command invoke `
+    --command-id RunPowerShellScript `
+    --name DC1 `
+    --resource-group  $ResourceGroup `
+    --scripts "$action = New-ScheduledTaskAction -Execute 'PowerShell.exe' -Argument '-File C:\AddDNSRecord.ps1'; $trigger = New-ScheduledTaskTrigger -AtStartup; Register-ScheduledTask -TaskName 'RunMyScriptAtStartup' -Action $action -Trigger $trigger"
 
 Write-Host "Checking if ls1 resolves..."
 az vm run-command invoke `
