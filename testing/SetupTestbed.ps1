@@ -381,11 +381,11 @@ Write-Output "The time is $(Get-Date)."
 #    --resource-group $ResourceGroup `
 #    --scripts "Set-Content -Path 'C:\AddDNSRecord.ps1' -Value ('Add-DnsServerResourceRecordA -Name \"LS1\" -ZoneName $DomainName -AllowUpdateAny -IPv4Address $LsIP -TimeToLive 01:00:00')"
 
-az vm run-command invoke `
-    --command-id RunPowerShellScript `
-    --name DC1 `
-    --resource-group  $ResourceGroup `
-    --scripts "$action = New-ScheduledTaskAction -Execute 'PowerShell.exe' -Argument '-File C:\AddDNSRecord.ps1'; $trigger = New-ScheduledTaskTrigger -AtStartup; Register-ScheduledTask -TaskName 'RunMyScriptAtStartup' -Action $action -Trigger $trigger"
+#az vm run-command invoke `
+#    --command-id RunPowerShellScript `
+#    --name DC1 `
+#    --resource-group  $ResourceGroup `
+#    --scripts "$action = New-ScheduledTaskAction -Execute 'PowerShell.exe' -Argument '-File C:\AddDNSRecord.ps1'; $trigger = New-ScheduledTaskTrigger -AtStartup; Register-ScheduledTask -TaskName 'RunMyScriptAtStartup' -Action $action -Trigger $trigger"
 
 Write-Host "Checking if ls1 resolves..."
 az vm run-command invoke `
