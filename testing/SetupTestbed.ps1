@@ -309,10 +309,7 @@ az vm run-command invoke `
     --scripts "`$Password = ConvertTo-SecureString `"$VMPassword`" -AsPlainText -Force; `
 Install-ADDSForest -DomainName $DomainName -Force -SafeModeAdministratorPassword `$Password"
 
-Write-Output "`nRestarting DC1..."
-az vm restart `
-    --resource-group $ResourceGroup `
-    --name DC1 `
+
 
 for ($i = 1; $i -le $NumClients; $i++) {
     Write-Output "`nAdding DC IP address to C$i host file..."
@@ -375,17 +372,22 @@ Write-Output "The time is $(Get-Date)."
 #    --vm-name DC1 `
 #     --script "Add-DnsServerResourceRecordA -Name `"LS1`" -ZoneName $DomainName -AllowUpdateAny -IPv4Address $LsIP -TimeToLive 01:00:00"
 
-#az vm run-command invoke `
-#    --command-id RunPowerShellScript `
-#    --name DC1 `
-#    --resource-group $ResourceGroup `
-#    --scripts "Set-Content -Path 'C:\AddDNSRecord.ps1' -Value ('Add-DnsServerResourceRecordA -Name \"LS1\" -ZoneName $DomainName -AllowUpdateAny -IPv4Address $LsIP -TimeToLive 01:00:00')"
+az vm run-command invoke `
+    --command-id RunPowerShellScript `
+    --name DC1 `
+    --resource-group $ResourceGroup `
+    --scripts "Set-Content -Path 'C:\AddDNSRecord.ps1' -Value ('Add-DnsServerResourceRecordA -Name \"LS1\" -ZoneName $DomainName -AllowUpdateAny -IPv4Address $LsIP -TimeToLive 01:00:00')"
 
-#az vm run-command invoke `
-#    --command-id RunPowerShellScript `
-#    --name DC1 `
-#    --resource-group  $ResourceGroup `
-#    --scripts "$action = New-ScheduledTaskAction -Execute 'PowerShell.exe' -Argument '-File C:\AddDNSRecord.ps1'; $trigger = New-ScheduledTaskTrigger -AtStartup; Register-ScheduledTask -TaskName 'RunMyScriptAtStartup' -Action $action -Trigger $trigger"
+az vm run-command invoke `
+    --command-id RunPowerShellScript `
+    --name DC1 `
+    --resource-group  $ResourceGroup `
+    --scripts "$action = New-ScheduledTaskAction -Execute 'PowerShell.exe' -Argument '-File C:\AddDNSRecord.ps1'; $trigger = New-ScheduledTaskTrigger -AtStartup; Register-ScheduledTask -TaskName 'RunMyScriptAtStartup' -Action $action -Trigger $trigger"
+
+Write-Output "`nRestarting DC1..."
+az vm restart `
+    --resource-group $ResourceGroup `
+    --name DC1 `
 
 Write-Host "Checking if ls1 resolves..."
 az vm run-command invoke `
