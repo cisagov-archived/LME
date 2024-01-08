@@ -57,6 +57,19 @@ param (
   [switch]$NoPrompt
 )
 
+# Define our library path
+$libraryPath = Join-Path -Path $PSScriptRoot -ChildPath "configure\azure_scripts\lib\utilityFunctions.ps1"
+
+# Check if the library file exists
+if (Test-Path -Path $libraryPath) {
+    # Dot-source the library script
+    . $libraryPath
+}
+else {
+    Write-Error "Library script not found at path: $libraryPath"
+}
+
+
 #DEFAULTS:
 #Desired Netowrk Mapping:
 $VNetPrefix = "10.1.0.0/16"
@@ -398,28 +411,37 @@ $bytes = [System.Text.Encoding]::Unicode.GetBytes($scriptContent)
 $encodedScript = [Convert]::ToBase64String($bytes)
 
 # Run the encoded script on the Azure VM
-az vm run-command invoke `
+$createDnsScriptResponse = az vm run-command invoke `
     --command-id RunPowerShellScript `
     --name DC1 `
     --resource-group $ResourceGroup `
     --scripts "Set-Content -Path 'C:\AddDnsRecord.ps1' -Value ([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('$encodedScript')))"
 
-az vm run-command invoke `
+Show-FormattedOutput -FormattedOutput (Format-AzVmRunCommandOutput -JsonResponse "$createDnsScriptResponse")
+
+
+$addDnsRecordResponse = az vm run-command invoke `
     --command-id RunPowerShellScript `
     --name DC1 `
     --resource-group $ResourceGroup `
     --scripts "C:\AddDnsRecord.ps1"
+Show-FormattedOutput -FormattedOutput (Format-AzVmRunCommandOutput -JsonResponse "$addDnsRecordResponse")
 
-Write-Output "`nRestarting DC1..."
-az vm restart `
+$removeDnsRecordScriptResponse = az vm run-command invoke `
+    --command-id RunPowerShellScript `
+    --name DC1 `
     --resource-group $ResourceGroup `
-    --name DC1
+    --scripts "Remove-Item -Path 'C:\AddDnsRecord.ps1' -Force"
+
+Show-FormattedOutput -FormattedOutput (Format-AzVmRunCommandOutput -JsonResponse "$removeDnsRecordScriptResponse")
 
 Write-Host "Checking if ls1 resolves..."
-az vm run-command invoke `
+$resolveLs1Response = az vm run-command invoke `
     --command-id RunPowerShellScript `
     --resource-group $ResourceGroup `
     --name DC1 `
     --scripts "Resolve-DnsName ls1"
+
+Show-FormattedOutput -FormattedOutput (Format-AzVmRunCommandOutput -JsonResponse "$addDnsRecordResponse")
 
 Write-Output "Done."
