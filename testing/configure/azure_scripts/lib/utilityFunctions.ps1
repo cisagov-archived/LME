@@ -8,6 +8,7 @@ function Format-AzVmRunCommandOutput {
 
     try {
         $responseObj = $JsonResponse | ConvertFrom-Json
+        Write-Host "Response object: $responseObj"
 
         if ($responseObj -and $responseObj.value) {
             $stdout = ""
