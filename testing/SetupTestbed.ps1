@@ -427,6 +427,14 @@ $addDnsRecordResponse = az vm run-command invoke `
     --scripts "C:\AddDnsRecord.ps1"
 Show-FormattedOutput -FormattedOutput (Format-AzVmRunCommandOutput -JsonResponse "$addDnsRecordResponse")
 
+Write-Host "Checking if ls1 resolves..."
+$resolveLs1Response = az vm run-command invoke `
+    --command-id RunPowerShellScript `
+    --resource-group $ResourceGroup `
+    --name DC1 `
+    --scripts "Resolve-DnsName ls1"
+Show-FormattedOutput -FormattedOutput (Format-AzVmRunCommandOutput -JsonResponse "$resolveLs1Response")
+
 $removeDnsRecordScriptResponse = az vm run-command invoke `
     --command-id RunPowerShellScript `
     --name DC1 `
@@ -435,13 +443,5 @@ $removeDnsRecordScriptResponse = az vm run-command invoke `
 
 Show-FormattedOutput -FormattedOutput (Format-AzVmRunCommandOutput -JsonResponse "$removeDnsRecordScriptResponse")
 
-Write-Host "Checking if ls1 resolves..."
-$resolveLs1Response = az vm run-command invoke `
-    --command-id RunPowerShellScript `
-    --resource-group $ResourceGroup `
-    --name DC1 `
-    --scripts "Resolve-DnsName ls1"
-
-Show-FormattedOutput -FormattedOutput (Format-AzVmRunCommandOutput -JsonResponse "$addDnsRecordResponse")
 
 Write-Output "Done."
