@@ -410,7 +410,9 @@ if (Wait-Job -Job `$job -Timeout `$timeout) {
 $bytes = [System.Text.Encoding]::Unicode.GetBytes($scriptContent)
 $encodedScript = [Convert]::ToBase64String($bytes)
 
+
 # Run the encoded script on the Azure VM
+Write-Output "`nAdding script to add DNS entry for Linux server. No output expected..."
 $createDnsScriptResponse = az vm run-command invoke `
     --command-id RunPowerShellScript `
     --name DC1 `
@@ -420,6 +422,7 @@ $createDnsScriptResponse = az vm run-command invoke `
 Show-FormattedOutput -FormattedOutput (Format-AzVmRunCommandOutput -JsonResponse "$createDnsScriptResponse")
 
 
+Write-Output "`nRunning script to add DNS entry for Linux server. It could time out or not. Check output of the next command..."
 $addDnsRecordResponse = az vm run-command invoke `
     --command-id RunPowerShellScript `
     --name DC1 `
@@ -435,6 +438,7 @@ $resolveLs1Response = az vm run-command invoke `
     --scripts "Resolve-DnsName ls1"
 Show-FormattedOutput -FormattedOutput (Format-AzVmRunCommandOutput -JsonResponse "$resolveLs1Response")
 
+Write-Host "Removing the Dns script. No output expected..."
 $removeDnsRecordScriptResponse = az vm run-command invoke `
     --command-id RunPowerShellScript `
     --name DC1 `
