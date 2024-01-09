@@ -418,6 +418,7 @@ $createDnsScriptResponse = az vm run-command invoke `
     --name DC1 `
     --resource-group $ResourceGroup `
     --scripts "Set-Content -Path 'C:\AddDnsRecord.ps1' -Value ([System.Text.Encoding]::Unicode.GetString([System.Convert]::FromBase64String('$encodedScript')))"
+Write-Output "Create Dns Script Response $createDnsScriptResponse"
 
 Show-FormattedOutput -FormattedOutput (Format-AzVmRunCommandOutput -JsonResponse "$createDnsScriptResponse")
 
@@ -428,6 +429,7 @@ $addDnsRecordResponse = az vm run-command invoke `
     --name DC1 `
     --resource-group $ResourceGroup `
     --scripts "C:\AddDnsRecord.ps1"
+Write-Output "Add Dns Record Response $addDnsRecordResponse"
 Show-FormattedOutput -FormattedOutput (Format-AzVmRunCommandOutput -JsonResponse "$addDnsRecordResponse")
 
 Write-Host "Checking if ls1 resolves..."
@@ -436,6 +438,7 @@ $resolveLs1Response = az vm run-command invoke `
     --resource-group $ResourceGroup `
     --name DC1 `
     --scripts "Resolve-DnsName ls1"
+Write-Output "Resolve Ls1 Response $resolveLs1Response"
 Show-FormattedOutput -FormattedOutput (Format-AzVmRunCommandOutput -JsonResponse "$resolveLs1Response")
 
 Write-Host "Removing the Dns script. No output expected..."
@@ -444,7 +447,7 @@ $removeDnsRecordScriptResponse = az vm run-command invoke `
     --name DC1 `
     --resource-group $ResourceGroup `
     --scripts "Remove-Item -Path 'C:\AddDnsRecord.ps1' -Force"
-
+Write-Output "Remove Dns Record Script Response $removeDnsRecordScriptResponse"
 Show-FormattedOutput -FormattedOutput (Format-AzVmRunCommandOutput -JsonResponse "$removeDnsRecordScriptResponse")
 
 
