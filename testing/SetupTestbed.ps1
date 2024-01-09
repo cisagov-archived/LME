@@ -242,8 +242,8 @@ Set-NetworkRules -AllowedSourcesList $AllowedSourcesList
 # Create the VMs #
 ##################
 $VMPassword = Get-RandomPassword 12
-Write-Output "`nWriting $VMAdmin password to password.txt"
-echo $VMPassword > password.txt
+Write-Output "`nWriting $VMAdmin password to ${ResourceGroup}.password.txt"
+echo $VMPassword > "${ResourceGroup}.password.txt"
 
 Write-Output "`nCreating DC1..."
 az vm create `
