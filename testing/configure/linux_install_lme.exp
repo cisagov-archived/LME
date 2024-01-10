@@ -2,7 +2,6 @@
 
 # Change to the LME directory containing files for the Linux server
 cd /opt/lme/Chapter\ 3\ Files/
-pwd
 
 
 # Adjust the timeout if necessary
@@ -38,10 +37,22 @@ send "ls1.lme.local\r"
 
 sleep 1
 # Use braces for regular expressions and ensure correct escaping
-expect -re {continue with self signed certificates.*: y}
-sleep 1
-send "\r"
-sleep 1
+expect {
+    # Condition for "Please reboot and rerun"
+    -re {Please reboot and rerun} {
+        # Handle the reboot condition
+        send_user "Reboot required. Exiting...\n"
+        exit
+    }
+    # Condition for continuing with self-signed certificates
+    -re {continue with self signed certificates.*: y} {
+        # Handle the condition to continue
+        sleep 1
+        send "y\r"
+        sleep 1
+        # Script continues after this block
+    }
+}
 
 expect -re {Skip Docker Install\? \(\[y\]es/\[n\]o\): n}
 sleep 1
