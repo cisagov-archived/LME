@@ -13,17 +13,20 @@ log_file -a output.log
 spawn ./deploy.sh install
 sleep 1
 expect {
-  -re {OK.*} {
+  -re {.*OK.*} {
       send "\r"
   }
-  -re {Proceed.*} {
+  -re {.*Proceed.*} {
       send "y\r"
   }
 }
 
 
-
 expect {
+    -re {Please reboot and rerun} {
+        send_user "Reboot required. Exiting...\n"
+        exit
+    }
     -re "Enter the IP of this Linux server.*" {
         sleep 1
         send "\r"
@@ -36,23 +39,11 @@ sleep 1
 send "ls1.lme.local\r"
 
 sleep 1
-# Use braces for regular expressions and ensure correct escaping
-expect {
-    # Condition for "Please reboot and rerun"
-    -re {Please reboot and rerun} {
-        # Handle the reboot condition
-        send_user "Reboot required. Exiting...\n"
-        exit
-    }
-    # Condition for continuing with self-signed certificates
-    -re {continue with self signed certificates.*: y} {
-        # Handle the condition to continue
-        sleep 1
-        send "y\r"
-        sleep 1
-        # Script continues after this block
-    }
-}
+
+expect -re {continue with self signed certificates.*: y}
+sleep 1
+send "y\r"
+sleep 1
 
 expect -re {Skip Docker Install\? \(\[y\]es/\[n\]o\): n}
 sleep 1
