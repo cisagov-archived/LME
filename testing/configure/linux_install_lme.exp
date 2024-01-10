@@ -23,7 +23,7 @@ expect {
 
 
 expect {
-    -re {Please reboot and rerun} {
+    -re {.*Please reboot and re-run this script to finish the install.*} {
         send_user "Reboot required. Exiting...\n"
         exit
     }
