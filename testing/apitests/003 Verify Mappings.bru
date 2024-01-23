@@ -1,0 +1,23 @@
+meta {
+  name: 003 Verify Mappings
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseURL}}winlogbeat-000001/_mapping
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
+
+tests {
+  test("mappings response verification",function(){
+    let json = require('C:\\Users\\admin.ackbar\\LME\\mappings response.json').toString().replace(/\s+/g,''); 
+    var data = res.getBody().toString().replace(/\s+/g,'');
+    expect(data).to.equal(json);
+    });
+}

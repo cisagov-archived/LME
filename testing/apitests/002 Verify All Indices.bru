@@ -1,0 +1,33 @@
+meta {
+  name: 002 Verify All Indices
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseURL}}_cat/indices/
+  body: none
+  auth: none
+}
+
+assert {
+  res.status: eq 200
+}
+
+tests {
+  test("indices test green open",function(){
+    const data = res.getBody();
+    expect(data).to.have.string('green open .internal.alerts-observability.logs.alerts-default-000001');
+    expect(data).to.have.string('green open .internal.alerts-observability.uptime.alerts-default-0000');
+    expect(data).to.have.string('green open .internal.alerts-ml.anomaly-detection.alerts-default-000001');
+    expect(data).to.have.string('green open .internal.alerts-observability.slo.alerts-default-000001');
+    expect(data).to.have.string('green open .internal.alerts-observability.apm.alerts-default-000001');
+    expect(data).to.have.string('green open .internal.alerts-observability.metrics.alerts-default-000001');
+    expect(data).to.have.string('green open .kibana-observability-ai-assistant-conversations-000001');
+    expect(data).to.have.string('green open winlogbeat-000001');
+    expect(data).to.have.string('green open .internal.alerts-observability.threshold.alerts-default-000001');
+    expect(data).to.have.string('green open .kibana-observability-ai-assistant-kb-000001');
+    expect(data).to.have.string('green open .internal.alerts-security.alerts-default-000001');
+    expect(data).to.have.string('green open .internal.alerts-stack.alerts-default-000001');
+  });
+}

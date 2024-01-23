@@ -1,0 +1,28 @@
+meta {
+  name: 001 localHost
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseURL}}
+  body: none
+  auth: none
+}
+
+auth:basic {
+  username: elastic
+  password: eOeUBkTEC5DcHnhwtqEI9Xsai9qrVvz2
+}
+
+assert {
+  res.status: eq 200
+  res.body.name: eq es01
+}
+
+tests {
+  test("Status code is 200",function(){
+    const data = res.getBody();
+    expect(res.getStatus()).to.equal(200);
+  });
+}

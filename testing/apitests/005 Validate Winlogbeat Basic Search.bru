@@ -1,0 +1,672 @@
+meta {
+  name: 005 Validate Winlogbeat Basic Search
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseURL}}winlogbeat-000001/_search
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "size": 1,
+    "query": {
+      "term": {
+        "host.name": "DC1.lme.local"
+      }
+    }
+  }
+}
+
+assert {
+  res.status: eq 200
+}
+
+tests {
+  
+  const Ajv = require("ajv");
+  const ajv = new Ajv();
+  
+  
+  const schema = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Generated schema for Root",
+    "type": "object",
+    "properties": {
+      "took": {
+        "type": "number"
+      },
+      "timed_out": {
+        "type": "boolean"
+      },
+      "_shards": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number"
+          },
+          "successful": {
+            "type": "number"
+          },
+          "skipped": {
+            "type": "number"
+          },
+          "failed": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "total",
+          "successful",
+          "skipped",
+          "failed"
+        ]
+      },
+      "hits": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "number"
+              },
+              "relation": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "value",
+              "relation"
+            ]
+          },
+          "max_score": {
+            "type": "number"
+          },
+          "hits": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_index": {
+                  "type": "string"
+                },
+                "_id": {
+                  "type": "string"
+                },
+                "_score": {
+                  "type": "number"
+                },
+                "_ignored": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "_source": {
+                  "type": "object",
+                  "properties": {
+                    "agent": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "ephemeral_id": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "id",
+                        "ephemeral_id",
+                        "type",
+                        "version"
+                      ]
+                    },
+                    "winlog": {
+                      "type": "object",
+                      "properties": {
+                        "computer_name": {
+                          "type": "string"
+                        },
+                        "process": {
+                          "type": "object",
+                          "properties": {
+                            "pid": {
+                              "type": "number"
+                            },
+                            "thread": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "id"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "pid",
+                            "thread"
+                          ]
+                        },
+                        "keywords": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "channel": {
+                          "type": "string"
+                        },
+                        "event_data": {
+                          "type": "object",
+                          "properties": {
+                            "ProcessName": {
+                              "type": "string"
+                            },
+                            "LogonGuid": {
+                              "type": "string"
+                            },
+                            "TargetOutboundDomainName": {
+                              "type": "string"
+                            },
+                            "VirtualAccount": {
+                              "type": "string"
+                            },
+                            "IpPort": {
+                              "type": "string"
+                            },
+                            "TransmittedServices": {
+                              "type": "string"
+                            },
+                            "LmPackageName": {
+                              "type": "string"
+                            },
+                            "RestrictedAdminMode": {
+                              "type": "string"
+                            },
+                            "ElevatedToken": {
+                              "type": "string"
+                            },
+                            "WorkstationName": {
+                              "type": "string"
+                            },
+                            "SubjectDomainName": {
+                              "type": "string"
+                            },
+                            "TargetDomainName": {
+                              "type": "string"
+                            },
+                            "LogonProcessName": {
+                              "type": "string"
+                            },
+                            "LogonType": {
+                              "type": "string"
+                            },
+                            "SubjectLogonId": {
+                              "type": "string"
+                            },
+                            "KeyLength": {
+                              "type": "string"
+                            },
+                            "TargetOutboundUserName": {
+                              "type": "string"
+                            },
+                            "TargetLogonId": {
+                              "type": "string"
+                            },
+                            "SubjectUserName": {
+                              "type": "string"
+                            },
+                            "TargetLinkedLogonId": {
+                              "type": "string"
+                            },
+                            "IpAddress": {
+                              "type": "string"
+                            },
+                            "TargetUserName": {
+                              "type": "string"
+                            },
+                            "ImpersonationLevel": {
+                              "type": "string"
+                            },
+                            "ProcessId": {
+                              "type": "string"
+                            },
+                            "SubjectUserSid": {
+                              "type": "string"
+                            },
+                            "AuthenticationPackageName": {
+                              "type": "string"
+                            },
+                            "TargetUserSid": {
+                              "type": "string"
+                            },
+                            "PrivilegeList": {
+                              "type": "string"
+                            },
+                            "MandatoryLabel": {
+                              "type": "string"
+                            },
+                            "ParentProcessName": {
+                              "type": "string"
+                            },
+                            "NewProcessId": {
+                              "type": "string"
+                            },
+                            "TokenElevationType": {
+                              "type": "string"
+                            },
+                            "NewProcessName": {
+                              "type": "string"
+                            },
+                            "CommandLine": {
+                              "type": "string"
+                            },
+                            "ParentImage": {
+                              "type": "string"
+                            },
+                            "Company": {
+                              "type": "string"
+                            },
+                            "Description": {
+                              "type": "string"
+                            },
+                            "User": {
+                              "type": "string"
+                            },
+                            "OriginalFileName": {
+                              "type": "string"
+                            },
+                            "TerminalSessionId": {
+                              "type": "string"
+                            },
+                            "IntegrityLevel": {
+                              "type": "string"
+                            },
+                            "ParentProcessId": {
+                              "type": "string"
+                            },
+                            "Product": {
+                              "type": "string"
+                            },
+                            "ParentUser": {
+                              "type": "string"
+                            },
+                            "Image": {
+                              "type": "string"
+                            },
+                            "ProcessGuid": {
+                              "type": "string"
+                            },
+                            "UtcTime": {
+                              "type": "string"
+                            },
+                            "CurrentDirectory": {
+                              "type": "string"
+                            },
+                            "Hashes": {
+                              "type": "string"
+                            },
+                            "FileVersion": {
+                              "type": "string"
+                            },
+                            "ParentCommandLine": {
+                              "type": "string"
+                            },
+                            "ParentProcessGuid": {
+                              "type": "string"
+                            },
+                            "LogonId": {
+                              "type": "string"
+                            },
+                            "RuleName": {
+                              "type": "string"
+                            },
+                            "SourceHostname": {
+                              "type": "string"
+                            },
+                            "SourcePort": {
+                              "type": "string"
+                            },
+                            "DestinationPort": {
+                              "type": "string"
+                            },
+                            "DestinationHostname": {
+                              "type": "string"
+                            },
+                            "SourcePortName": {
+                              "type": "string"
+                            },
+                            "DestinationPortName": {
+                              "type": "string"
+                            },
+                            "Initiated": {
+                              "type": "string"
+                            },
+                            "DestinationIp": {
+                              "type": "string"
+                            },
+                            "SourceIp": {
+                              "type": "string"
+                            },
+                            "SourceIsIpv6": {
+                              "type": "string"
+                            },
+                            "DestinationIsIpv6": {
+                              "type": "string"
+                            },
+                            "Protocol": {
+                              "type": "string"
+                            },
+                            "CreationUtcTime": {
+                              "type": "string"
+                            },
+                            "TargetFilename": {
+                              "type": "string"
+                            }
+                          },
+                          "required": []
+                        },
+                        "opcode": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "number"
+                        },
+                        "record_id": {
+                          "type": "number"
+                        },
+                        "event_id": {
+                          "type": "string"
+                        },
+                        "task": {
+                          "type": "string"
+                        },
+                        "provider_guid": {
+                          "type": "string"
+                        },
+                        "api": {
+                          "type": "string"
+                        },
+                        "provider_name": {
+                          "type": "string"
+                        },
+                        "user": {
+                          "type": "object",
+                          "properties": {
+                            "identifier": {
+                              "type": "string"
+                            },
+                            "domain": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "identifier",
+                            "domain",
+                            "name",
+                            "type"
+                          ]
+                        },
+                        "user_data": {
+                          "type": "object",
+                          "properties": {
+                            "FilePath": {
+                              "type": "string"
+                            },
+                            "FqbnLength": {
+                              "type": "string"
+                            },
+                            "FullFilePathLength": {
+                              "type": "string"
+                            },
+                            "FullFilePath": {
+                              "type": "string"
+                            },
+                            "RuleId": {
+                              "type": "string"
+                            },
+                            "PolicyNameLength": {
+                              "type": "string"
+                            },
+                            "RuleSddl": {
+                              "type": "string"
+                            },
+                            "TargetUser": {
+                              "type": "string"
+                            },
+                            "TargetLogonId": {
+                              "type": "string"
+                            },
+                            "FilePathLength": {
+                              "type": "string"
+                            },
+                            "TargetProcessId": {
+                              "type": "string"
+                            },
+                            "RuleSddlLength": {
+                              "type": "string"
+                            },
+                            "Fqbn": {
+                              "type": "string"
+                            },
+                            "PolicyName": {
+                              "type": "string"
+                            },
+                            "FileHashLength": {
+                              "type": "string"
+                            },
+                            "FileHash": {
+                              "type": "string"
+                            },
+                            "RuleNameLength": {
+                              "type": "string"
+                            },
+                            "xml_name": {
+                              "type": "string"
+                            },
+                            "RuleName": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "FilePath",
+                            "FqbnLength",
+                            "FullFilePathLength",
+                            "FullFilePath",
+                            "RuleId",
+                            "PolicyNameLength",
+                            "RuleSddl",
+                            "TargetUser",
+                            "TargetLogonId",
+                            "FilePathLength",
+                            "TargetProcessId",
+                            "RuleSddlLength",
+                            "Fqbn",
+                            "PolicyName",
+                            "FileHashLength",
+                            "FileHash",
+                            "RuleNameLength",
+                            "xml_name",
+                            "RuleName"
+                          ]
+                        },
+                        "activity_id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "computer_name",
+                        "process",
+                        "channel",
+                        "opcode",
+                        "record_id",
+                        "event_id",
+                        "task",
+                        "provider_guid",
+                        "api",
+                        "provider_name"
+                      ]
+                    },
+                    "@timestamp": {
+                      "type": "string"
+                    },
+                    "ecs": {
+                      "type": "object",
+                      "properties": {
+                        "version": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "version"
+                      ]
+                    },
+                    "log": {
+                      "type": "object",
+                      "properties": {
+                        "level": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "level"
+                      ]
+                    },
+                    "host": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "name"
+                      ]
+                    },
+                    "@version": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "event": {
+                      "type": "object",
+                      "properties": {
+                        "ingested": {
+                          "type": "string"
+                        },
+                        "code": {
+                          "type": "string"
+                        },
+                        "original": {
+                          "type": "string"
+                        },
+                        "provider": {
+                          "type": "string"
+                        },
+                        "created": {
+                          "type": "string"
+                        },
+                        "kind": {
+                          "type": "string"
+                        },
+                        "action": {
+                          "type": "string"
+                        },
+                        "outcome": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "ingested",
+                        "code",
+                        "original",
+                        "provider",
+                        "created",
+                        "kind",
+                        "action"
+                      ]
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "agent",
+                    "winlog",
+                    "@timestamp",
+                    "ecs",
+                    "log",
+                    "host",
+                    "@version",
+                    "message",
+                    "event",
+                    "tags"
+                  ]
+                }
+              },
+              "required": [
+                "_index",
+                "_id",
+                "_score",
+                "_source"
+              ]
+            }
+          }
+        },
+        "required": [
+          "total",
+          "max_score",
+          "hits"
+        ]
+      }
+    },
+    "required": [
+      "took",
+      "timed_out",
+      "_shards",
+      "hits"
+    ]
+  };
+        
+  const validate = ajv.compile(schema);
+  const data = res.getBody();  
+  
+  test ("Validate Winlogbeat basic search schema" , function(){  
+    const valid = validate(data);
+    assert.isTrue(valid);  
+  });
+  
+  test ("Validate host name search criteria" , function(){
+    assert.nestedPropertyVal(data,"hits.hits[0]._source.host.name","DC1.lme.local","Host Name Validation");
+                                                      
+  });
+  
+}
