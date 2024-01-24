@@ -1,21 +1,5 @@
 {
   "version": "1",
   "name": "LME API Tests",
-  "type": "collection",
-  "clientCertificates": {
-    "enabled": true,
-    "certs": []
-  },
-  "proxy": {
-    "enabled": "global",
-    "protocol": "http",
-    "hostname": "http://10.1.0.5",
-    "port": 9200,
-    "auth": {
-      "enabled": false,
-      "username": "elastic",
-      "password": "eOeUBkTEC5DcHnhwtqEI9Xsai9qrVvz2"
-    },
-    "bypassProxy": ""
-  }
+  "type": "collection"
 }
