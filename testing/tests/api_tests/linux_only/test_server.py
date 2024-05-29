@@ -1,4 +1,5 @@
 import json
+import time
 import warnings
 
 import pytest
@@ -9,7 +10,7 @@ from requests.auth import HTTPBasicAuth
 import urllib3
 import os
 
-from api_tests.helpers import make_request, load_json_schema
+from api_tests.helpers import make_request, load_json_schema, get_latest_winlogbeat_index, post_request
 
 # Disable SSL warnings
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -26,6 +27,28 @@ def convertJsonFileToString(file_path):
 @pytest.fixture(autouse=True)
 def suppress_insecure_request_warning():
     warnings.simplefilter("ignore", urllib3.exceptions.InsecureRequestWarning)
+
+
+
+def test_winlogbeat_insert(es_host, es_port, username, password):
+    # Computer software overview-> Filter Hosts
+    url = f"https://{es_host}:{es_port}"
+    filter_hosts_query = load_json_schema(f"{current_script_dir}/queries/filter_hosts.json")
+    first_response = make_request(f"{url}/winlogbeat-*/_search", username, password, filter_hosts_query)
+
+    latest_index = get_latest_winlogbeat_index(es_host, es_port, username, password)
+
+    fixture = load_json_schema(f"{current_script_dir}/fixtures/hosts.json")
+
+    ans =  post_request(f"{url}/{latest_index}/_doc", username, password, fixture)
+    time.sleep(5)
+
+    second_response = make_request(f"{url}/winlogbeat-*/_search", username, password, filter_hosts_query)
+
+    second_response_loaded = second_response.json()
+
+    print(f"Response: {second_response_loaded}")
+
 
 
 def test_elastic_root(es_host, es_port, username, password):
