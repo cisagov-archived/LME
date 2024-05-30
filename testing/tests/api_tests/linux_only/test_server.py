@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import json
 import time
 import warnings
@@ -30,24 +31,48 @@ def suppress_insecure_request_warning():
 
 
 
-def test_winlogbeat_insert(es_host, es_port, username, password):
+def test_filter_hosts_insert(es_host, es_port, username, password):
+    # Get the current date
+    today = datetime.now()
+
+    # Generate timestamp one day before
+    one_day_before = (today - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+
+    # Generate timestamp one day after
+    one_day_after = (today + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+
     # Computer software overview-> Filter Hosts
     url = f"https://{es_host}:{es_port}"
-    filter_hosts_query = load_json_schema(f"{current_script_dir}/queries/filter_hosts.json")
-    first_response = make_request(f"{url}/winlogbeat-*/_search", username, password, filter_hosts_query)
 
+    # This is the query from the "Computer software overview} dashboard in Kibana
+    filter_hosts_query = load_json_schema(f"{current_script_dir}/queries/filter_hosts.json")
+    filter_hosts_query['query']['bool']['filter'][0]['range']['@timestamp']['gte'] = one_day_before
+    filter_hosts_query['query']['bool']['filter'][0]['range']['@timestamp']['lte'] = one_day_after
+
+    # You can use this to compare to the update later
+    first_response = make_request(f"{url}/winlogbeat-*/_search", username, password, filter_hosts_query)
+    first_response_loaded = first_response.json()
+    
+    # Get the latest winlogbeat index
     latest_index = get_latest_winlogbeat_index(es_host, es_port, username, password)
 
+    # This fixture is a pared down version of the data that will match the query 
     fixture = load_json_schema(f"{current_script_dir}/fixtures/hosts.json")
+    fixture['@timestamp'] = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
+    # Insert the fixture into the latest index
     ans =  post_request(f"{url}/{latest_index}/_doc", username, password, fixture)
-    time.sleep(5)
 
+    # Make sure to sleep for a few seconds to allow the data to be indexed
+    time.sleep(2)
+
+    # Make the same query again 
     second_response = make_request(f"{url}/winlogbeat-*/_search", username, password, filter_hosts_query)
 
     second_response_loaded = second_response.json()
 
-    print(f"Response: {second_response_loaded}")
+    # Check to make sure the data was inserted
+    assert(second_response_loaded['aggregations']['2']['buckets'][3]['key'] == 'testing.lme.local')
 
 
 

@@ -1,6 +1,6 @@
 {
     "winlog": {
-      "computer_name": "DC1.lme.local",
+      "computer_name": "testing.lme.local",
       "event_id": "4625",
       "task": "Logon",
       "keywords": [
@@ -18,7 +18,7 @@
     },
     "@timestamp": "2024-05-08T08:40:18.252Z",
     "host": {
-      "name": "DC1.lme.local"
+      "name": "testing.lme.local"
     },
     "event": {
       "code": "4625",
