@@ -59,6 +59,7 @@ Wazuh can automatically block IP addresses attempting SSH brute-force attacks us
 
 - You can create custom scripts for different actions.
 - For custom scripts, ensure you create corresponding rules to analyze the generated logs.
+- See more on that here: https://documentation.wazuh.com/current/user-manual/capabilities/active-response/custom-active-response-scripts.html
 
 This setup provides an automated defense against SSH brute-force attacks, enhancing the security of your Linux/Unix systems monitored by Wazuh.
 
