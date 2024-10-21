@@ -29,7 +29,7 @@ alert:
   - "slack"
 
 # Slack alert details
-slack_webhook_url: "https://hooks.slack.com/services/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"
+slack_webhook_url: "https://hooks.slack.com/services/ADSDFSFD" # This is an example webhook to slack
 
 # Alert message format
 alert_text: |
