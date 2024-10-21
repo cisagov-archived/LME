@@ -107,12 +107,6 @@ alert:
 slack_webhook_url: "https://hooks.slack.com/services/EXAMPLE" # This is an example webhook to slack
 ```
 
-This configures the alert to be sent to Slack, specifying:
-- The Slack webhook URL
-- The username for the alert ("Windows Security Alert")
-- The color of the alert message (red, indicating danger)
-- The emoji to use (a rotating light, indicating urgency)
-
 ## Alert Message Format
 
 ```yaml
