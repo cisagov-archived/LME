@@ -29,7 +29,7 @@ alert:
   - "slack"
 
 # Slack alert details
-slack_webhook_url: "https://hooks.slack.com/services/ADSDFSFD" # This is an example webhook to slack
+slack_webhook_url: "https://hooks.slack.com/services/EXAMPLE" # This is an example webhook to slack
 
 # Alert message format
 alert_text: |
@@ -104,7 +104,7 @@ This configuration may be email, slack, or anything else. See official elastaler
 alert:
   - "slack"
 
-slack_webhook_url: "https://hooks.slack.com/services/ADSDFSFD" # This is an example webhook to slack
+slack_webhook_url: "https://hooks.slack.com/services/EXAMPLE" # This is an example webhook to slack
 ```
 
 This configures the alert to be sent to Slack, specifying:
